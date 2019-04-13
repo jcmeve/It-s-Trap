@@ -19,6 +19,10 @@ public class Bullet : MonoBehaviour
     private void OnCollisionEnter(Collision collision) {
         ContactPoint contactPoint = collision.contacts[0];
         var clone = Instantiate(go_RicochetEffect, contactPoint.point, Quaternion.LookRotation(contactPoint.normal));
+
+        if (collision.transform.CompareTag("Mine")) {
+            collision.transform.GetComponent<Mine>().Damaged(damage);
+        }   
         Destroy(clone,0.5f);
         SoundManager.instance.PlaySE(soundRicochet);
         GetComponent<Rigidbody>().velocity = Vector3.zero;

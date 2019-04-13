@@ -1,26 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GunController : MonoBehaviour { 
     [Header("현재 장착된 총")]
     [SerializeField] Gun currentGun;
     float currentFireRate=0;
-    //
+
     Queue<GameObject> bullets = new Queue<GameObject>();
-    // Start is called before the first frame update
+
+    [SerializeField] Text txt_CurrentGunBullet;
     void Start()
     {
-        //
             CreateBullets();
-        //
+        
     }
+
+    public void BulletUISetting() {
+        txt_CurrentGunBullet.text = "x " + currentGun.bulletCount;
+    }
+
     #region PoolingScripts
     void CreateBullets() {
         for (int i = 0; i < 10; i++) {
             GameObject temp = Instantiate(currentGun.go_Bullet_Prefab);
             
-            temp.SetActive(false);
+            temp.SetActive(false); 
             bullets.Enqueue(temp);
         }
     }
@@ -48,7 +54,7 @@ public class GunController : MonoBehaviour {
         }
     }
     void TryFire() {
-        if (Input.GetButton("Fire1")) {
+        if (Input.GetButton("Fire1")&&currentGun.bulletCount>0) {
             if (currentFireRate <= 0) {
                 Fire();
                 currentFireRate = currentGun.fireRate;
@@ -56,6 +62,9 @@ public class GunController : MonoBehaviour {
         }
     }
     void Fire() {
+
+        currentGun.bulletCount--;
+        BulletUISetting();
         SoundManager.instance.PlaySE(currentGun.soundFire);
         // currentGun.animator.SetTrigger("GunFire");
         currentGun.ps_MuzzleFlash.Play();

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
+
+    bool canMove;
+    public bool CanMove { get { return canMove; } set { canMove = value; } }
     [Header("속도 관련 변수")]
     [SerializeField]float moveSpeed;
     [SerializeField] float jetPackSpeed;
@@ -21,6 +24,7 @@ public class PlayerController : MonoBehaviour {
 
 
     void Start() {
+        CanMove = true;
         myRigid = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
         isJet = false;
@@ -36,13 +40,13 @@ public class PlayerController : MonoBehaviour {
     }
     void TryMove() {
         float LR = Input.GetAxisRaw("Horizontal");
-        if (LR != 0) {//A,<- = -1  이고, D,-> = 1
+        if (LR != 0&&canMove) {//A,<- = -1  이고, D,-> = 1
             Vector3 moveDir = new Vector3(0, 0, LR);
             myRigid.AddForce(moveDir * moveSpeed);
         }
     }
     void TryJet() {
-        if (Input.GetKey(KeyCode.Space)&&theFuel.isFuel) {
+        if (Input.GetKey(KeyCode.Space)&&theFuel.isFuel&&canMove) {
             if (!isJet) {
                 audioSource.Play();
                 ps_LeftEngine.Play();
